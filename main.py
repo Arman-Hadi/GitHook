@@ -3,6 +3,19 @@ from werkzeug.exceptions import HTTPException
 import hashlib
 import hmac
 from datetime import datetime
+import traceback
+from zoneinfo import ZoneInfo
+
+
+def log_error(e):
+    with open('log.log', 'a') as f:
+        tb = traceback.format_exc()
+        dt = datetime.now().astimezone(tz=ZoneInfo('Asia/Tehran'))
+        f.write(f"""{str(dt)}:
+{''.join(tb)}
+------------------------------------------------------------------------------
+
+""")
 
 
 def log(_log):
@@ -34,13 +47,17 @@ app = Flask(__name__)
 
 @app.route("/apihook", methods=['POST',])
 def apihook():
-    payload = request.get_data()
-    sig_header = request.headers.get('x-hub-signature-256', '')
-    verify_signature(payload, 'apihoook_aslfjasdwevn2408', sig_header)
+    try:
+        payload = request.get_data()
+        sig_header = request.headers.get('x-hub-signature-256', '')
+        verify_signature(payload, 'apihoook_aslfjasdwevn2408', sig_header)
 
-    data = request.get_json()
-    if data['repository']['full_name'] == 'BracketAcademy/BracketAcademy':
-        log(data)
+        data = request.get_json()
+        if data['repository']['full_name'] == 'BracketAcademy/BracketAcademy':
+            log(data)
+    except Exception as e:
+        log_error(e)
+        raise HTTPException(status_code=400, detail=str(e))
 
     return "<h1 style='color:blue'>Hello There!</h1>"
 
