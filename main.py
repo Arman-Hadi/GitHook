@@ -20,8 +20,9 @@ def log_error(e):
 
 def log(_log):
     with open('log.log', 'a') as f:
+        dt = datetime.now().astimezone(tz=ZoneInfo('Asia/Tehran'))
         f.write(
-            str(datetime.now()) + ':\n' + _log + '\n'
+            str(dt) + ':\n' + str(_log) + '\n'
         )
 
 
@@ -57,7 +58,7 @@ def apihook():
             log(data)
     except Exception as e:
         log_error(e)
-        raise HTTPException(status_code=400, detail=str(e))
+        return str(e), 400
 
     return "<h1 style='color:blue'>Hello There!</h1>"
 
