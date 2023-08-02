@@ -36,7 +36,7 @@ secret = "apihoook_aslfjasdwevn2408"
 @app.route("/apihook", methods=['POST',])
 def apihook():
     payload = request.get_data()
-    log(str(payload))
+    verify_signature(payload)
 
     return "<h1 style='color:blue'>Hello There!</h1>"
 
