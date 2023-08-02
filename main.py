@@ -38,6 +38,10 @@ def apihook():
     sig_header = request.headers.get('x-hub-signature-256', '')
     verify_signature(payload, 'apihoook_aslfjasdwevn2408', sig_header)
 
+    data = request.get_json()
+    if data['repository']['full_name'] == 'BracketAcademy/BracketAcademy':
+        log(data)
+
     return "<h1 style='color:blue'>Hello There!</h1>"
 
 if __name__ == "__main__":
