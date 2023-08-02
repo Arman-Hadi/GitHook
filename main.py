@@ -31,12 +31,12 @@ def verify_signature(payload_body, secret_token, signature_header):
 
 app = Flask(__name__)
 
-secret = "apihoook_aslfjasdwevn2408"
 
 @app.route("/apihook", methods=['POST',])
 def apihook():
     payload = request.get_data()
-    verify_signature(payload)
+    sig_header = request.headers.get('x-hub-signature-256', '')
+    verify_signature(payload, 'apihoook_aslfjasdwevn2408', sig_header)
 
     return "<h1 style='color:blue'>Hello There!</h1>"
 
