@@ -69,7 +69,7 @@ def apihook():
 
         data = request.get_json()
         if data['repository']['full_name'] == 'BracketAcademy/BracketAcademy':
-            cmd = "cd /root/w/Bracket/backend && git pull && docker compose down && docker compose up -d"
+            cmd = "cd /root/w/Bracket/backend && git pull https://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@github.com/BracketAcademy/GitHook.git && docker compose down && docker compose up -d"
             run_command(cmd)
     except Exception as e:
         log_error(e)
