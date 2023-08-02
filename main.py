@@ -5,6 +5,8 @@ import hmac
 from datetime import datetime
 import traceback
 from zoneinfo import ZoneInfo
+import subprocess
+from shlex import split
 
 
 def log_error(e):
@@ -42,9 +44,21 @@ def verify_signature(payload_body, secret_token, signature_header):
     expected_signature = "sha256=" + hash_object.hexdigest()
     if not hmac.compare_digest(expected_signature, signature_header):
         raise HTTPException(status_code=403, detail="Request signatures didn't match!")
+    
+
+def run_command(cmd):
+    p = subprocess.Popen(split(cmd), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    outs, errs = p.communicate()
+
+    if p.poll():
+        error = errs if errs else outs
+        log(error)
+        raise RuntimeError(error)
+
+    return p, outs, errs
+
 
 app = Flask(__name__)
-
 
 @app.route("/apihook", methods=['POST',])
 def apihook():
@@ -55,12 +69,13 @@ def apihook():
 
         data = request.get_json()
         if data['repository']['full_name'] == 'BracketAcademy/BracketAcademy':
-            log(data)
+            cmd = "cd /root/w/Bracket/backend && git pull && docker compose down && docker compose up -d"
+            run_command(cmd)
     except Exception as e:
         log_error(e)
         return str(e), 400
 
-    return "<h1 style='color:blue'>Hello There!</h1>"
+    return "OK KAKA"
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
