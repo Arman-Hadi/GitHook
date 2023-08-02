@@ -46,8 +46,8 @@ def verify_signature(payload_body, secret_token, signature_header):
         raise HTTPException(status_code=403, detail="Request signatures didn't match!")
     
 
-def run_command(cmd):
-    p = subprocess.Popen(split(cmd), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def run_command(cmd, cwd):
+    p = subprocess.Popen(split(cmd), cwd=cwd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     outs, errs = p.communicate()
 
     if p.poll():
@@ -69,10 +69,11 @@ def apihook():
 
         data = request.get_json()
         if data['repository']['full_name'] == 'BracketAcademy/BracketAcademy':
-            run_command('cd /root/w/Bracket/backend')
-            run_command('git pull https://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@github.com/BracketAcademy/BracketAcademy.git')
-            run_command("docker compose down")
-            run_command("docker compose up -d")
+            # run_command('cd /root/w/Bracket/backend')
+            cwd = '/root/w/Bracket/backend'
+            run_command('git pull https://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@github.com/BracketAcademy/BracketAcademy.git', cwd)
+            run_command("docker compose down", cwd)
+            run_command("docker compose up -d", cwd)
     except Exception as e:
         log_error(e)
         return str(e), 400
