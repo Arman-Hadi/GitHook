@@ -76,7 +76,7 @@ def apihook():
             run_command("docker compose up -d", cwd)
         elif data['repository']['full_name'] == 'BracketAcademy/konj-instagram':
             cwd = '/root/w/KonjInstagram/front'
-            run_command('git pull https://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@github.com/BracketAcademy/konj-instagram.git main', cwd)
+            run_command('git pull https://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@github.com/BracketAcademy/konj-instagram.git master', cwd)
             run_command('npm run build')
             # run_command("docker compose down front", cwd)
             # run_command("docker compose up front -d", cwd)
