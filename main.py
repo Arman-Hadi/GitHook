@@ -73,12 +73,12 @@ def apihook():
             run_command('git pull https://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@github.com/BracketAcademy/BracketAcademy.git main', cwd)
             run_command("docker compose down", cwd)
             run_command("docker compose up -d", cwd)
-        elif data['repository']['full_name'] == 'BracketAcademy/konj-instagram':
+            return 'OK BRACKET'
+        elif data['repository']['full_name'] == 'BracketAcademy/feedlink':
             log('--------------into if --------------------')
             cwd = '/root/w/FeedLink/front'
-            run_command('git pull https://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@github.com/BracketAcademy/konj-instagram.git master', cwd)
-            # run_command("docker compose down front", cwd)
-            # run_command("docker compose up front -d", cwd)
+            run_command('git pull https://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@github.com/BracketAcademy/feedlink.git master', cwd)
+            return 'OK FEEDLINK'
     except Exception as e:
         log_error(e)
         return str(e), 400
@@ -88,7 +88,7 @@ def apihook():
 
 @app.route("/list")
 def list_hooks():
-    return ['bracket', 'feedlink', 'fuck']
+    return ['bracket', 'feedlink']
 
 
 if __name__ == "__main__":
