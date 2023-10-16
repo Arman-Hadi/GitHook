@@ -86,5 +86,11 @@ def apihook():
 
     return "OK KAKA"
 
+
+@app.route("/list")
+def list_hooks():
+    return ['bracket', 'feedlink']
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
