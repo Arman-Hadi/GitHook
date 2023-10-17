@@ -71,7 +71,7 @@ def apihook():
         if data['repository']['full_name'] == 'BracketAcademy/BracketAcademy':
             cwd = '/root/w/BracketAcademy/backend'
             # run_command('git pull https://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@github.com/BracketAcademy/BracketAcademy.git main', cwd)
-            run_command('mkdir hell')
+            run_command('mkdir hell', cwd)
             run_command("docker compose down", cwd)
             run_command("docker compose up -d", cwd)
             return 'OK BRACKET'
