@@ -6,8 +6,7 @@ from datetime import datetime
 import traceback
 from zoneinfo import ZoneInfo
 import subprocess
-from shlex import split
-
+import shlex
 
 def log_error(e):
     with open('log.log', 'a') as f:
@@ -44,10 +43,10 @@ def verify_signature(payload_body, secret_token, signature_header):
     expected_signature = "sha256=" + hash_object.hexdigest()
     if not hmac.compare_digest(expected_signature, signature_header):
         raise HTTPException(status_code=403, detail="Request signatures didn't match!")
-    
+
 
 def run_command(cmd, cwd):
-    p = subprocess.Popen(split(cmd), cwd=cwd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(shlex.split(cmd), cwd=cwd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     outs, errs = p.communicate()
 
     if p.poll():
@@ -70,7 +69,6 @@ def apihook():
         data = request.get_json()
         if data['repository']['full_name'] == 'BracketAcademy/BracketAcademy':
             cwd = '/root/w/BracketAcademy/backend'
-            log(split('git pull'))
             run_command('git pull https://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@github.com/BracketAcademy/BracketAcademy.git main', cwd)
             run_command("docker compose down", cwd)
             run_command("docker compose up -d", cwd)
