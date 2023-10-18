@@ -46,7 +46,7 @@ def verify_signature(payload_body, secret_token, signature_header):
 
 
 def run_command(cmd, cwd):
-    p = subprocess.Popen(cmd, cwd=cwd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(shlex.split(cmd), cwd=cwd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     outs, errs = p.communicate()
 
     if p.poll():
@@ -69,7 +69,6 @@ def apihook():
         data = request.get_json()
         if data['repository']['full_name'] == 'BracketAcademy/BracketAcademy':
             cwd = '/root/w/BracketAcademy/backend'
-            run_command('sh -c "mkdir hey"', cwd)
             run_command('git pull https://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@github.com/BracketAcademy/BracketAcademy.git main', cwd)
             run_command("docker compose down", cwd)
             run_command("docker compose up -d", cwd)
