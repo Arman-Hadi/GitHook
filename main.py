@@ -87,6 +87,7 @@ def apihook():
 
 @app.route("/list")
 def list_hooks():
+    run_command('mkdir fucku', '/root/w/BracketAcademy/backend')
     return ['bracket', 'feedlink']
 
 
