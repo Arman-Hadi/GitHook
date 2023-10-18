@@ -74,7 +74,6 @@ def apihook():
             run_command("/usr/bin/docker compose up -d", cwd)
             return 'OK BRACKET'
         elif data['repository']['full_name'] == 'BracketAcademy/feedlink':
-            logc('--------------into if --------------------')
             cwd = '/root/w/FeedLink/front'
             run_command('/usr/bin/git pull https://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@github.com/BracketAcademy/feedlink.git master', cwd)
             return 'OK FEEDLINK'
