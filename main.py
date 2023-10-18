@@ -88,7 +88,7 @@ def apihook():
 @app.route("/list")
 def list_hooks():
     try:
-        run_command('mkdir fucku', '/root/w/BracketAcademy/backend', shell=True)
+        subprocess.run(shlex.split('mkdir fucku'), cwd='/root/w/BracketAcademy/backend', shell=False)
     except Exception as e:
         log_error(e)
     return ['bracket', 'feedlink']
