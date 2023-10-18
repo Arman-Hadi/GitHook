@@ -45,8 +45,9 @@ def verify_signature(payload_body, secret_token, signature_header):
         raise HTTPException(status_code=403, detail="Request signatures didn't match!")
 
 
-def run_command(cmd, cwd):
-    p = subprocess.Popen(shlex.split(cmd), cwd=cwd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def run_command(cmd, cwd, shell=False):
+    subprocess.Popen()
+    p = subprocess.Popen(shlex.split(cmd), cwd=cwd, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     outs, errs = p.communicate()
 
     if p.poll():
@@ -88,7 +89,7 @@ def apihook():
 @app.route("/list")
 def list_hooks():
     try:
-        run_command(cmd='mkdir fucku', cwd='/root/w/BracketAcademy/backend')
+        run_command('mkdir fucku', '/root/w/BracketAcademy/backend', shell=True)
     except Exception as e:
         log_error(e)
     return ['bracket', 'feedlink']
