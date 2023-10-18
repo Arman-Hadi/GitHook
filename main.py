@@ -46,7 +46,6 @@ def verify_signature(payload_body, secret_token, signature_header):
 
 
 def run_command(cmd, cwd, shell=False):
-    subprocess.Popen()
     p = subprocess.Popen(shlex.split(cmd), cwd=cwd, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     outs, errs = p.communicate()
 
