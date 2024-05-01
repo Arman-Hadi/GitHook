@@ -77,6 +77,9 @@ def apihook():
             cwd = '/root/w/FeedLink/front'
             run_command('/usr/bin/git pull https://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@github.com/BracketAcademy/feedlink.git master', cwd)
             return 'OK FEEDLINK'
+        elif data['repository']['full_name'] == 'BracketAcademy/konj-backend':
+            cwd = '/root/w/Konj/konj-backend'
+            run_command('/usr/bin/git pull https://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@github.com/BracketAcademy/konj-backend.git master', cwd)
     except Exception as e:
         log_error(e)
         return str(e), 400
