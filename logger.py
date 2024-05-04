@@ -1,7 +1,6 @@
 import traceback
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from os.path import dirname
 
 
 def log_error():

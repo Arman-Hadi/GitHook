@@ -1,5 +1,5 @@
+from os.path import dirname
 import subprocess, shlex
-from os import dirname
 from json import loads
 
 import logger
