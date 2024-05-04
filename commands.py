@@ -23,8 +23,9 @@ def run_command(cmd, cwd):
 
 
 def git_pull(cwd, token, remote, local):
+    git = configs()['git']
     return run_command(
-        f'{configs()['git']} pull https://{token}@github.com/{remote}.git {local}',
+        f"{git} pull https://{token}@github.com/{remote}.git {local}",
         cwd
     )
 
