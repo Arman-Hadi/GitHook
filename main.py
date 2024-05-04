@@ -53,6 +53,9 @@ def do_the_thing(data, repo):
         for service in services:
             commands.docker_compose_restart(path, service)
         return
+    
+    print(changes)
+    print(check_a_in_b(repo['restart_files'], changes))
 
     if repo['always_restart'] or check_a_in_b(repo['restart_files'], changes):
         for service in services:
