@@ -16,7 +16,7 @@ def run_command(cmd, cwd):
 
     if p.poll():
         error = errs if errs else outs
-        logger.log(error)
+        logger.log_error(error)
         raise RuntimeError(error)
 
     return p, outs, errs
