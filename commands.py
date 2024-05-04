@@ -33,19 +33,19 @@ def git_pull(cwd, token, remote, local):
 def docker_compose_build(cwd, service):
     docker = configs()['docker']
     return run_command(
-        cwd,
-        f'{docker} compose build {service}'
+        f'{docker} compose build {service}',
+        cwd
     )
 
 
 def docker_compose_restart(cwd, service):
     docker = configs()['docker']
     down = run_command(
-        cwd,
-        f'{docker} compose down {service}'
+        f'{docker} compose down {service}',
+        cwd
     )
     up = run_command(
-        cwd,
-        f'{docker} compose up {service} -d'
+        f'{docker} compose up {service} -d',
+        cwd
     )
     return down, up
