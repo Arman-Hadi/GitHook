@@ -84,7 +84,7 @@ def apihook():
     try:
         payload = request.get_data()
         sig_header = request.headers.get('x-hub-signature-256', '')
-        verify_signature(payload, 'apihoook_aslfjasdwevn2408', sig_header)
+        verify_signature(payload, get_configs()['github_secret_token'], sig_header)
 
         data = request.get_json()
         for repo in get_repos():
