@@ -87,7 +87,7 @@ def apihook():
         verify_signature(payload, 'apihoook_aslfjasdwevn2408', sig_header)
 
         data = request.get_json()
-        for repo in repos:
+        for repo in get_repos():
             if data['repository']['full_name'] == repo['repository']:
                 task = Thread(target=do_the_thing, args=(data, repo))
                 task.start()
@@ -99,10 +99,9 @@ def apihook():
 
 @app.route("/list")
 def list_hooks():
-    return [repo['name'] for repo in repos]
+    return [repo['name'] for repo in get_repos()]
 
 
 if __name__ == "__main__":
     # configs = get_configs()
-    repos = get_repos()
     app.run(host='0.0.0.0')
