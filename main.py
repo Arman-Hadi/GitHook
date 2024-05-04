@@ -1,30 +1,62 @@
+import hashlib, hmac
+from os.path import dirname
+from json import loads
+from typing import List
+from threading import Thread
+
 from flask import Flask, request
 from werkzeug.exceptions import HTTPException
-import hashlib
-import hmac
-from datetime import datetime
-import traceback
-from zoneinfo import ZoneInfo
-import subprocess
-import shlex
 
-def log_error(e):
-    with open('log.log', 'a') as f:
-        tb = traceback.format_exc()
-        dt = datetime.now().astimezone(tz=ZoneInfo('Asia/Tehran'))
-        f.write(f"""{str(dt)}:
-{''.join(tb)}
-------------------------------------------------------------------------------
-
-""")
+import commands, logger
 
 
-def log(_log):
-    with open('log.log', 'a') as f:
-        dt = datetime.now().astimezone(tz=ZoneInfo('Asia/Tehran'))
-        f.write(
-            str(dt) + ':\n' + str(_log) + '\n'
-        )
+def get_configs() -> dict:
+    try:
+        with open(dirname(__file__) + '/configs.json', 'r') as f:
+            return loads(f.read())
+    except:
+        raise Exception("No configs.json file found.")
+    
+def get_repos() -> List[dict]:
+    try:
+        with open(dirname(__file__) + '/repos.json', 'r') as f:
+            return loads(f.read())
+    except:
+        raise Exception("No repos.json file found.")
+
+
+def get_changes(github_data: dict):
+    changes = []
+    if 'commits' in github_data:
+        for commit in github_data['commits']:
+            changes += commit['added'] + commit['removed'] + commit['modified']
+    return changes
+
+
+def check_a_in_b(a: list, b: list) -> bool:
+    b_string = '__'.join(b)
+    for i in a:
+        return i in b_string
+    return False
+
+
+def do_the_thing(data, repo):
+    changes = get_changes(data)
+    services = repo['docker_services']
+    path = repo['path']
+
+    commands.git_pull(path, repo['token'], repo['local_branch'], path)
+
+    if repo['always_build'] or check_a_in_b(repo['build_files'], changes):
+        for service in services:
+            commands.docker_compose_build(path, service)
+        for service in services:
+            commands.docker_compose_restart(path, service)
+        return
+
+    if repo['always_restart'] or check_a_in_b(repo['restart_files'], changes):
+        for service in services:
+            commands.docker_compose_restart(path, service)
 
 
 def verify_signature(payload_body, secret_token, signature_header):
@@ -45,18 +77,6 @@ def verify_signature(payload_body, secret_token, signature_header):
         raise HTTPException(status_code=403, detail="Request signatures didn't match!")
 
 
-def run_command(cmd, cwd, shell=False):
-    p = subprocess.Popen(shlex.split(cmd), cwd=cwd, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    outs, errs = p.communicate()
-
-    if p.poll():
-        error = errs if errs else outs
-        log(error)
-        raise RuntimeError(error)
-
-    return p, outs, errs
-
-
 app = Flask(__name__)
 
 @app.route("/apihook", methods=['POST',])
@@ -67,30 +87,22 @@ def apihook():
         verify_signature(payload, 'apihoook_aslfjasdwevn2408', sig_header)
 
         data = request.get_json()
-        if data['repository']['full_name'] == 'BracketAcademy/BracketAcademy':
-            cwd = '/root/w/BracketAcademy/backend'
-            run_command('/usr/bin/git pull https://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@github.com/BracketAcademy/BracketAcademy.git main', cwd)
-            run_command("/usr/bin/docker compose down", cwd)
-            run_command("/usr/bin/docker compose up -d", cwd)
-            return 'OK BRACKET'
-        elif data['repository']['full_name'] == 'BracketAcademy/feedlink':
-            cwd = '/root/w/FeedLink/front'
-            run_command('/usr/bin/git pull https://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@github.com/BracketAcademy/feedlink.git master', cwd)
-            return 'OK FEEDLINK'
-        elif data['repository']['full_name'] == 'BracketAcademy/konj-backend':
-            cwd = '/root/w/Konj/konj-backend'
-            run_command('/usr/bin/git pull https://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@github.com/BracketAcademy/konj-backend.git master', cwd)
+        for repo in repos:
+            if data['repository']['full_name'] == repo['repository']:
+                task = Thread(target=do_the_thing, args=(data, repo))
+                task.start()
+                return "OK"
     except Exception as e:
-        log_error(e)
-        return str(e), 400
-
-    return "OK KAKA"
+        logger.log_error()
+        return e.__class__.__name__
 
 
 @app.route("/list")
 def list_hooks():
-    return ['bracket', 'feedlink']
+    return [repo['name'] for repo in repos]
 
 
 if __name__ == "__main__":
+    # configs = get_configs()
+    repos = get_repos()
     app.run(host='0.0.0.0')
