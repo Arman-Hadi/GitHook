@@ -19,5 +19,5 @@ def log(_log):
     with open('log.log', 'a') as f:
         dt = datetime.now().astimezone(tz=ZoneInfo('Asia/Tehran'))
         f.write(
-            str(dt) + ':\n' + str(_log) + '\n'
+            str(dt) + ':\n' + str(_log) + '\n' + '----------------'
         )

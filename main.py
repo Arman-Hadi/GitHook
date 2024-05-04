@@ -34,10 +34,12 @@ def get_changes(github_data: dict):
 
 
 def check_a_in_b(a: list, b: list) -> bool:
-    b_string = '__'.join(b)
+    b_string = '_#_'.join(b)
     for i in a:
-        return i in b_string
-    return False
+        if i in b_string: break
+    else:
+        return False
+    return True
 
 
 def do_the_thing(data, repo):
@@ -53,9 +55,6 @@ def do_the_thing(data, repo):
         for service in services:
             commands.docker_compose_restart(path, service)
         return
-    
-    logger.log(changes)
-    logger.log(check_a_in_b(repo['restart_files'], changes))
 
     if repo['always_restart'] or check_a_in_b(repo['restart_files'], changes):
         for service in services:
