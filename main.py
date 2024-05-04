@@ -45,7 +45,7 @@ def do_the_thing(data, repo):
     services = repo['docker_services']
     path = repo['path']
 
-    commands.git_pull(path, repo['token'], repo['local_branch'], path)
+    commands.git_pull(path, repo['token'], repo['repository'], repo['local_branch'])
 
     if repo['always_build'] or check_a_in_b(repo['build_files'], changes):
         for service in services:
