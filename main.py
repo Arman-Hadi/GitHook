@@ -4,7 +4,7 @@ from json import loads
 from typing import List
 from threading import Thread
 
-from flask import Flask, request
+from flask import Flask, request, render_template
 from werkzeug.exceptions import HTTPException
 
 import commands, logger
@@ -85,6 +85,7 @@ def verify_signature(payload_body, secret_token, signature_header):
 
 app = Flask(__name__)
 
+
 @app.route("/apihook", methods=['POST',])
 def apihook():
     try:
@@ -103,9 +104,9 @@ def apihook():
         return e.__class__.__name__
 
 
-@app.route("/list")
+@app.route("/")
 def list_hooks():
-    return [repo['name'] for repo in get_repos()]
+    return render_template('repos.html')
 
 
 if __name__ == "__main__":
