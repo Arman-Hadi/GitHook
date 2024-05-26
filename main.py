@@ -46,19 +46,23 @@ def do_the_thing(data, repo):
     changes = get_changes(data)
     services = repo['docker_services']
     path = repo['path']
+    logfile = repo.get('logfile', 'log.log')
 
-    commands.git_pull(path, repo['token'], repo['repository'], repo['local_branch'])
+    commands.git_pull(
+        path, repo['token'], repo['repository'], repo['local_branch'],
+        where=logfile
+    )
 
     if repo['always_build'] or check_a_in_b(repo['build_files'], changes):
         for service in services:
-            commands.docker_compose_build(path, service)
+            commands.docker_compose_build(path, service, where=logfile)
         for service in services:
-            commands.docker_compose_restart(path, service)
+            commands.docker_compose_restart(path, service, where=logfile)
         return
 
     if repo['always_restart'] or check_a_in_b(repo['restart_files'], changes):
         for service in services:
-            commands.docker_compose_restart(path, service)
+            commands.docker_compose_restart(path, service, where=logfile)
 
 
 def verify_signature(payload_body, secret_token, signature_header):

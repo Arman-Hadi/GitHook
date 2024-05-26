@@ -10,46 +10,42 @@ def configs() -> dict:
         return loads(f.read())
 
 
-def run_command(cmd, cwd):
+def run_command(cmd, cwd, where='log.log'):
     p = subprocess.Popen(shlex.split(cmd), cwd=cwd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     outs, errs = p.communicate()
 
     if p.poll():
         error = errs if errs else outs
-        logger.log_error(error)
+        logger.log_error(error, where)
         raise RuntimeError(error)
 
     return p, outs, errs
 
 
-def git_pull(cwd, token, remote, local):
+def git_pull(cwd, token, remote, local, **kwargs):
     git = configs()['git']
     return run_command(
         f"{git} pull https://{token}@github.com/{remote}.git {local}",
-        cwd
+        cwd, **kwargs
     )
-    # return run_command(
-    #     f"{git} pull {remote} {local}",
-    #     cwd
-    # )
 
 
-def docker_compose_build(cwd, service):
+def docker_compose_build(cwd, service, **kwargs):
     docker = configs()['docker']
     return run_command(
         f'{docker} compose build {service}',
-        cwd
+        cwd, **kwargs
     )
 
 
-def docker_compose_restart(cwd, service):
+def docker_compose_restart(cwd, service, **kwargs):
     docker = configs()['docker']
     down = run_command(
         f'{docker} compose down {service}',
-        cwd
+        cwd, **kwargs
     )
     up = run_command(
         f'{docker} compose up {service} -d',
-        cwd
+        cwd, **kwargs
     )
     return down, up

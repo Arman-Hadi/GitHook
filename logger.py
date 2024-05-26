@@ -3,21 +3,19 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 
-def log_error(e):
-    with open('log.log', 'a') as f:
+line = '--------------------------------------------------'
+
+
+def log_error(e, where='log.log'):
+    with open(where, 'a') as f:
         tb = traceback.format_exc()
         dt = datetime.now().astimezone(tz=ZoneInfo('Asia/Tehran'))
-        f.write(f"""{str(dt)}:
-{''.join(tb)}
-{str(e)}
-------------------------------------------------------------------------------
-
-""")
+        f.write(str(dt) + ':\n' + ''.join(tb) + '\n' + str(e) + '\n' + line)
 
 
-def log(_log):
-    with open('log.log', 'a') as f:
+def log(_log, where='log.log'):
+    with open(where, 'a') as f:
         dt = datetime.now().astimezone(tz=ZoneInfo('Asia/Tehran'))
         f.write(
-            str(dt) + ':\n' + str(_log) + '\n' + '----------------'
+            str(dt) + ':\n' + str(_log) + '\n' + line
         )
