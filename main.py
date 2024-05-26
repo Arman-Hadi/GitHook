@@ -100,7 +100,7 @@ def apihook():
                 task.start()
                 return "OK"
     except Exception as e:
-        logger.log_error()
+        logger.log_error(e)
         return e.__class__.__name__
 
 
