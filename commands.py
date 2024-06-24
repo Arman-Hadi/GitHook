@@ -32,10 +32,16 @@ def git_pull(cwd, token, remote, local, **kwargs):
 
 def docker_compose_build(cwd, service, **kwargs):
     docker = configs()['docker']
-    return run_command(
-        f'{docker} compose build {service}',
+    
+    build = run_command(
+        f'{docker} compose build {service} --no-cache',
         cwd, **kwargs
     )
+    prune = run_command(
+        f'{docker} builder prune -a -f',
+        cwd, **kwargs
+    )
+    return build, prune
 
 
 def docker_compose_restart(cwd, service, **kwargs):
