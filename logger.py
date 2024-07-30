@@ -1,4 +1,4 @@
-import traceback, os
+import traceback, os, sys
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -15,7 +15,9 @@ def log_error(e, where='log.log', sms=True):
         f.write(str(dt) + ':\n' + ''.join(tb) + '\n' + str(e) + '\n' + line)
 
     if sms:
-        send_sms_log('GitHook', ''.join(tb) + '\n' + str(e))
+        exc_type, exc_value, exc_tb = sys.exc_info()
+        short_msg = f"{exc_type.__name__}: {exc_value}"
+        send_sms_log('GitHook', short_msg + '\n' + str(e))
 
 
 def send_sms_log(app_name: str, msg: str):
@@ -25,6 +27,8 @@ def send_sms_log(app_name: str, msg: str):
     SMS_OTP_TEMPLATE = os.environ.get("SMS_OTP_TEMPLATE")
 
     sender = SmsIr(SMS_API_KEY, SMS_LINE_NUMBER)
+    if len(msg) > 25:
+        msg = msg[:25]
 
     try:
         res = sender.send_verify_code(
