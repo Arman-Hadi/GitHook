@@ -21,8 +21,8 @@ def log_error(e, where='log.log', sms=True):
         if exc_type:
             short_msg = f"{exc_type.__name__}: {exc_value}"
         else:
-            short_msg = "command ends with error:"
-        send_sms_log('GitHook', short_msg + '\n' + str(e))
+            short_msg = str(e)
+        send_sms_log('GitHook', short_msg)
 
 
 def send_sms_log(app_name: str, msg: str):
