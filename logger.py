@@ -9,6 +9,8 @@ line = '--------------------------------------------------'
 
 
 def log_error(e, where='log.log', sms=True):
+    if isinstance(e, bytes):
+        e = e.decode("utf-8")
     with open(where, 'a') as f:
         tb = traceback.format_exc()
         dt = datetime.now().astimezone(tz=ZoneInfo('Asia/Tehran'))
@@ -16,7 +18,10 @@ def log_error(e, where='log.log', sms=True):
 
     if sms:
         exc_type, exc_value, exc_tb = sys.exc_info()
-        short_msg = f"{exc_type.__name__}: {exc_value}"
+        if exc_type:
+            short_msg = f"{exc_type.__name__}: {exc_value}"
+        else:
+            short_msg = "command ends with error:"
         send_sms_log('GitHook', short_msg + '\n' + str(e))
 
 
