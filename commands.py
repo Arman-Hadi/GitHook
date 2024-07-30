@@ -17,7 +17,6 @@ def run_command(cmd, cwd, where='log.log'):
     if p.poll():
         error = errs if errs else outs
         logger.log_error(error, where)
-        raise RuntimeError(error)
 
     return p, outs, errs
 
@@ -32,7 +31,7 @@ def git_pull(cwd, token, remote, local, **kwargs):
 
 def docker_compose_build(cwd, service, **kwargs):
     docker = configs()['docker']
-    
+
     build = run_command(
         f'{docker} compose build {service} --no-cache',
         cwd, **kwargs
