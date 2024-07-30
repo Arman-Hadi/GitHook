@@ -30,10 +30,16 @@ def send_sms_log(app_name: str, msg: str):
         res = sender.send_verify_code(
             number=MY_NUMBER,
             template_id=SMS_OTP_TEMPLATE,
-            parameters=[{
-                'app': app_name,
-                'log': msg
-            }]
+            parameters=[
+                {
+                    'name': "app",
+                    'value': app_name
+                },
+                {
+                    "name": "log",
+                    'value': msg
+                }
+            ]
         )
         if res.status_code != 200:
             log_error(f"Couldn't send sms log: {res.text}", sms=False)
